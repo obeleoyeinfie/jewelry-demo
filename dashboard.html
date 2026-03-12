@@ -1,0 +1,899 @@
+<!-- dashboard.html - UPDATED WITH FIXED NAVIGATION -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | LUMIÈRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E8C1;
+            --gold-dark: #B8941F;
+            --black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --cream: #FAF9F6;
+            --gray: #888;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --info: #2196F3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--cream);
+            line-height: 1.6;
+        }
+
+        /* Top Navigation Bar - Always Visible */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10,10,10,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.2em;
+        }
+
+        .nav-center-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-center-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-center-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-center-links a:hover,
+        .nav-center-links a.active {
+            color: var(--gold);
+        }
+
+        .nav-center-links a:hover::after,
+        .nav-center-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-right-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-icon-btn {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-icon-btn:hover {
+            color: var(--gold);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-menu-dropdown {
+            position: relative;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar-small:hover {
+            border-color: var(--gold);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .user-menu-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:first-child { border-radius: 8px 8px 0 0; }
+        .dropdown-item:last-child { 
+            border-radius: 0 0 8px 8px; 
+            border-bottom: none;
+            color: var(--danger);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            padding-left: 2rem;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 1001;
+        }
+
+        .mobile-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,10,0.98);
+            z-index: 999;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
+
+        .mobile-nav-links a span {
+            font-size: 1.3rem;
+        }
+
+        .mobile-user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--charcoal);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .mobile-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .mobile-user-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .mobile-user-info p {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        /* Main Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Desktop Sidebar */
+        .sidebar {
+            background: var(--charcoal);
+            border-right: 1px solid rgba(212,175,55,0.1);
+            padding: 2rem;
+            position: fixed;
+            width: 280px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        .nav-section { margin-bottom: 2rem; }
+        
+        .nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 0.5rem; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--cream);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
+
+        .nav-link span { font-size: 1.2rem; }
+
+        .sidebar-user {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .user-info h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .user-info p { font-size: 0.8rem; color: var(--gray); }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem 3rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--charcoal);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+        }
+
+        .stat-label { font-size: 0.85rem; color: var(--gray); }
+        .stat-change { font-size: 0.8rem; color: var(--success); }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--charcoal);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+        }
+
+        .chart-container { position: relative; height: 250px; }
+
+        .period-btn {
+            padding: 0.3rem 0.8rem;
+            background: transparent;
+            border: 1px solid rgba(212,175,55,0.3);
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .period-btn.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        /* Orders Table */
+        .orders-section {
+            background: var(--charcoal);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.1);
+            width: 90vw;
+            overflow-x: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .orders-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .order-id { color: var(--gold); font-weight: 500; }
+
+        .order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .status-delivered { background: rgba(76,175,80,0.1); color: var(--success); }
+        .status-processing { background: rgba(212,175,55,0.1); color: var(--gold); }
+        .status-shipped { background: rgba(33,150,243,0.1); color: var(--info); }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gold);
+            background: transparent;
+            color: var(--gold);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .btn-sm:hover { background: var(--gold); color: var(--black); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 968px) {
+            .main-content{
+                width: 100vw;
+            }
+            .nav-center-links { display: none; }
+            .mobile-toggle { display: flex; }
+            
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar { display: none; }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .mobile-menu-overlay {
+                display: block;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .top-nav { padding: 0 1rem; width: 100vw;}
+            .nav-logo { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation - Always Visible -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">LUMIÈRE</a>
+        
+        <ul class="nav-center-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="collections.html">Collections</a></li>
+            <li><a href="shop.html">Boutique</a></li>
+            <li><a href="dashboard.html" class="active">Account</a></li>
+        </ul>
+
+        <div class="nav-right-section">
+            <a href="wishlist.html" class="nav-icon-btn">♡</a>
+            <a href="cart.html" class="nav-icon-btn">
+                Bag
+                <span class="badge">2</span>
+            </a>
+            
+            <div class="user-menu-dropdown">
+                <div class="user-avatar-small">EM</div>
+                <div class="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item">My Profile</a>
+                    <a href="dashboard.html" class="dropdown-item">Dashboard</a>
+                    <a href="orders.html" class="dropdown-item">My Orders</a>
+                    <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                    <a href="settings.html" class="dropdown-item">Settings</a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
+            <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-user-section">
+            <div class="mobile-user-avatar">EM</div>
+            <div class="mobile-user-info">
+                <h3>Elena Montgomery</h3>
+                <p>VIP Member</p>
+            </div>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Account Menu</p>
+            <ul class="mobile-nav-links">
+                <li><a href="dashboard.html" class="active"><span>◈</span> Dashboard</a></li>
+                <li><a href="orders.html"><span>◉</span> My Orders</a></li>
+                <li><a href="wishlist.html"><span>♡</span> Wishlist</a></li>
+                <li><a href="profile.html"><span>◊</span> Profile</a></li>
+                <li><a href="settings.html"><span>⚙</span> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Shopping</p>
+            <ul class="mobile-nav-links">
+                <li><a href="index.html"><span>🏠</span> Home</a></li>
+                <li><a href="collections.html"><span>✦</span> Collections</a></li>
+                <li><a href="shop.html"><span>🛍</span> Boutique</a></li>
+                <li><a href="cart.html"><span>🛒</span> Shopping Bag</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Support</p>
+            <ul class="mobile-nav-links">
+                <li><a href="help.html"><span>?</span> Help Center</a></li>
+                <li><a href="index.html" onclick="logout()"><span>→</span> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Desktop Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-section">
+                <p class="nav-title">Menu</p>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="dashboard.html" class="nav-link active"><span>◈</span> Dashboard</a></li>
+                    <li class="nav-item"><a href="orders.html" class="nav-link"><span>◉</span> My Orders</a></li>
+                    <li class="nav-item"><a href="wishlist.html" class="nav-link"><span>♡</span> Wishlist</a></li>
+                    <li class="nav-item"><a href="profile.html" class="nav-link"><span>◊</span> Profile</a></li>
+                    <li class="nav-item"><a href="settings.html" class="nav-link"><span>⚙</span> Settings</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <p class="nav-title">Support</p>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="help.html" class="nav-link"><span>?</span> Help Center</a></li>
+                    <li class="nav-item"><a href="index.html" class="nav-link" onclick="logout()"><span>→</span> Logout</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar">EM</div>
+                <div class="user-info">
+                    <h4>Elena Montgomery</h4>
+                    <p>VIP Client</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p style="color: var(--gray);">Welcome back, Elena. Here's your overview.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">◈</div>
+                        <span class="stat-change">+12%</span>
+                    </div>
+                    <div class="stat-value">$48,250</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">◉</div>
+                        <span class="stat-change">+3</span>
+                    </div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Orders Placed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">♡</div>
+                        <span class="stat-change">+5</span>
+                    </div>
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">Wishlist Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">★</div>
+                    </div>
+                    <div class="stat-value">2,450</div>
+                    <div class="stat-label">Loyalty Points</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Purchase History</h3>
+                        <div>
+                            <button class="period-btn active">6M</button>
+                            <button class="period-btn">1Y</button>
+                            <button class="period-btn">All</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="purchaseChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Categories</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="orders-section">
+                <div class="section-header">
+                    <h3 class="chart-title">Recent Orders</h3>
+                    <a href="orders.html" class="btn-sm">View All</a>
+                </div>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="order-id">#LUM-001</td>
+                            <td>Mar 10, 2026</td>
+                            <td>Eternal Solitaire Ring</td>
+                            <td><span class="order-status status-delivered">● Delivered</span></td>
+                            <td>$12,500</td>
+                            <td><button class="btn-sm">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#LUM-002</td>
+                            <td>Mar 5, 2026</td>
+                            <td>Midnight Sapphire Pendant</td>
+                            <td><span class="order-status status-shipped">● Shipped</span></td>
+                            <td>$8,900</td>
+                            <td><button class="btn-sm">Track</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const toggle = document.querySelector('.mobile-toggle');
+            const menu = document.getElementById('mobileMenu');
+            
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (!menu.contains(e.target) && !toggle.contains(e.target) && menu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+        });
+
+        // Charts
+        const ctx1 = document.getElementById('purchaseChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Spending',
+                    data: [5000, 8200, 15000, 6000, 11200, 12500],
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212,175,55,0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#888', callback: (val) => '$' + val/1000 + 'k' }
+                    },
+                    x: { grid: { display: false }, ticks: { color: '#888' } }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Rings', 'Necklaces', 'Earrings', 'Bracelets'],
+                datasets: [{
+                    data: [45, 25, 20, 10],
+                    backgroundColor: ['#D4AF37', '#B8941F', '#F4E8C1', '#8B7355'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#888', usePointStyle: true } }
+                },
+                cutout: '70%'
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

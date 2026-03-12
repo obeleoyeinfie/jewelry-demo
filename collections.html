@@ -1,0 +1,649 @@
+<!-- collections.html - Collections Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collections | LUMIÈRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E8C1;
+            --gold-dark: #B8941F;
+            --black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --cream: #FAF9F6;
+            --gray: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--cream);
+        }
+
+        /* Navigation - Same as other pages */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10,10,10,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.2em;
+        }
+
+        .nav-center-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-center-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-center-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-center-links a:hover,
+        .nav-center-links a.active {
+            color: var(--gold);
+        }
+
+        .nav-center-links a:hover::after,
+        .nav-center-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-right-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-icon-btn {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-icon-btn:hover {
+            color: var(--gold);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-menu-dropdown {
+            position: relative;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar-small:hover {
+            border-color: var(--gold);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            padding-left: 2rem;
+        }
+
+        .dropdown-item:last-child { 
+            border-bottom: none;
+            color: #f44336;
+        }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,10,0.98);
+            z-index: 999;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--charcoal);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .mobile-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .mobile-user-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+        }
+
+        .mobile-user-info p {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
+
+        /* Hero Section */
+        .page-hero {
+            margin-top: 70px;
+            height: 50vh;
+            min-height: 400px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3)),
+                        radial-gradient(circle at 30% 30%, rgba(212,175,55,0.2), transparent 50%);
+            background-color: var(--charcoal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        /* Collections Grid */
+        .collections-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .collection-hero-card {
+            position: relative;
+            height: 600px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .collection-hero-card.large {
+            grid-column: span 2;
+            height: 500px;
+        }
+
+        .collection-bg {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: var(--gold);
+            opacity: 0.6;
+            transition: all 0.5s ease;
+        }
+
+        .collection-hero-card:hover .collection-bg {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+        .collection-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 3rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+        }
+
+        .collection-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .collection-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .collection-desc {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+        }
+
+        .collection-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .collection-link:hover {
+            gap: 1rem;
+        }
+
+        /* Featured Items */
+        .featured-items {
+            padding: 4rem 2rem;
+            background: var(--charcoal);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .item-card {
+            background: var(--black);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--gold);
+            position: relative;
+        }
+
+        .quick-add {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: var(--gold);
+            color: var(--black);
+            text-align: center;
+            cursor: pointer;
+            transition: bottom 0.3s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .item-card:hover .quick-add {
+            bottom: 0;
+        }
+
+        .item-info {
+            padding: 1.5rem;
+        }
+
+        .item-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-price {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .collections-grid {
+                grid-template-columns: 1fr;
+            }
+            .collection-hero-card.large {
+                grid-column: span 1;
+            }
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .nav-center-links { display: none; }
+            .mobile-toggle { display: flex; }
+            .mobile-menu-overlay { display: block; }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav { padding: 0 1rem; }
+            .collection-hero-card { height: 400px; }
+            .collection-title { font-size: 1.8rem; }
+            .items-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">LUMIÈRE</a>
+        
+        <ul class="nav-center-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="collections.html" class="active">Collections</a></li>
+            <li><a href="shop.html">Boutique</a></li>
+            <li><a href="dashboard.html">Account</a></li>
+        </ul>
+
+        <div class="nav-right-section">
+            <a href="wishlist.html" class="nav-icon-btn">♡</a>
+            <a href="cart.html" class="nav-icon-btn">
+                Bag
+                <span class="badge">2</span>
+            </a>
+            
+            <div class="user-menu-dropdown">
+                <div class="user-avatar-small">EM</div>
+                <div class="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item">My Profile</a>
+                    <a href="dashboard.html" class="dropdown-item">Dashboard</a>
+                    <a href="orders.html" class="dropdown-item">My Orders</a>
+                    <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                    <a href="settings.html" class="dropdown-item">Settings</a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
+            <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-user-section">
+            <div class="mobile-user-avatar">EM</div>
+            <div class="mobile-user-info">
+                <h3>Elena Montgomery</h3>
+                <p>VIP Member</p>
+            </div>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Menu</p>
+            <ul class="mobile-nav-links">
+                <li><a href="index.html"><span>🏠</span> Home</a></li>
+                <li><a href="collections.html" class="active"><span>✦</span> Collections</a></li>
+                <li><a href="shop.html"><span>🛍</span> Boutique</a></li>
+                <li><a href="cart.html"><span>🛒</span> Shopping Bag</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Account</p>
+            <ul class="mobile-nav-links">
+                <li><a href="dashboard.html"><span>◈</span> Dashboard</a></li>
+                <li><a href="orders.html"><span>◉</span> My Orders</a></li>
+                <li><a href="wishlist.html"><span>♡</span> Wishlist</a></li>
+                <li><a href="profile.html"><span>◊</span> Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Support</p>
+            <ul class="mobile-nav-links">
+                <li><a href="help.html"><span>?</span> Help Center</a></li>
+                <li><a href="index.html" onclick="logout()"><span>→</span> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="hero-content">
+            <h1>Our Collections</h1>
+            <p>Discover our curated selections, each telling a unique story of craftsmanship and elegance</p>
+        </div>
+    </section>
+
+    <!-- Collections Grid -->
+    <section class="collections-section">
+        <div class="collections-grid">
+            <div class="collection-hero-card large" onclick="location.href='shop.html'">
+                <div class="collection-bg">✦</div>
+                <div class="collection-content">
+                    <span class="collection-tag">Signature</span>
+                    <h2 class="collection-title">Celestial Dreams</h2>
+                    <p class="collection-desc">Diamonds that capture the ethereal light of distant stars, crafted for those who dream beyond boundaries.</p>
+                    <span class="collection-link">Explore Collection →</span>
+                </div>
+            </div>
+
+            <div class="collection-hero-card" onclick="location.href='shop.html'">
+                <div class="collection-bg">✧</div>
+                <div class="collection-content">
+                    <span class="collection-tag">New Season</span>
+                    <h2 class="collection-title">Golden Hour</h2>
+                    <p class="collection-desc">Warm amber tones and rose gold inspired by the magic of sunset.</p>
+                    <span class="collection-link">Explore →</span>
+                </div>
+            </div>
+
+            <div class="collection-hero-card" onclick="location.href='shop.html'">

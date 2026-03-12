@@ -1,0 +1,962 @@
+<!-- shop.html - Shop/Boutique Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique | LUMIÈRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E8C1;
+            --gold-dark: #B8941F;
+            --black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --cream: #FAF9F6;
+            --gray: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--cream);
+        }
+
+        /* Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10,10,10,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.2em;
+        }
+
+        .nav-center-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-center-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-center-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-center-links a:hover,
+        .nav-center-links a.active {
+            color: var(--gold);
+        }
+
+        .nav-center-links a:hover::after,
+        .nav-center-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-right-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-icon-btn {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-icon-btn:hover {
+            color: var(--gold);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-menu-dropdown {
+            position: relative;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar-small:hover {
+            border-color: var(--gold);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            padding-left: 2rem;
+        }
+
+        .dropdown-item:last-child { 
+            border-bottom: none;
+            color: #f44336;
+        }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,10,0.98);
+            z-index: 999;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--charcoal);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .mobile-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .mobile-user-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+        }
+
+        .mobile-user-info p {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
+
+        /* Shop Layout */
+        .shop-container {
+            margin-top: 70px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar Filters */
+        .filters-sidebar {
+            background: var(--charcoal);
+            border-right: 1px solid rgba(212,175,55,0.1);
+            padding: 2rem;
+            position: sticky;
+            top: 70px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .filter-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-clear {
+            font-size: 0.75rem;
+            color: var(--gray);
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .filter-clear:hover {
+            color: var(--gold);
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+        }
+
+        .filter-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold);
+        }
+
+        .filter-option label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .filter-option:hover label {
+            color: var(--cream);
+        }
+
+        .price-range {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .price-input {
+            width: 80px;
+            padding: 0.5rem;
+            background: var(--graphite);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            border-radius: 4px;
+        }
+
+        /* Product Grid */
+        .shop-main {
+            padding: 2rem;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .shop-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        .shop-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 4px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover,
+        .view-btn.active {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--charcoal);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+
+        .product-card:hover {
+            border-color: rgba(212,175,55,0.3);
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--gold);
+        }
+
+        .product-badges {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .badge-tag {
+            padding: 0.3rem 0.8rem;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 4px;
+        }
+
+        .badge-tag.sale {
+            background: #f44336;
+            color: white;
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .product-actions {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .current-price {
+            font-size: 1.2rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .original-price {
+            font-size: 1rem;
+            color: var(--gray);
+            text-decoration: line-through;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* Mobile Filter Toggle */
+        .mobile-filter-toggle {
+            display: none;
+            padding: 0.8rem 1.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .shop-container {
+                grid-template-columns: 1fr;
+            }
+            .filters-sidebar {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 998;
+                height: calc(100vh - 70px);
+            }
+            .filters-sidebar.active {
+                display: block;
+            }
+            .mobile-filter-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .nav-center-links { display: none; }
+            .mobile-toggle { display: flex; }
+            .mobile-menu-overlay { display: block; }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav { padding: 0 1rem; }
+            .shop-main { padding: 1rem; }
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .product-image { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">LUMIÈRE</a>
+        
+        <ul class="nav-center-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="collections.html">Collections</a></li>
+            <li><a href="shop.html" class="active">Boutique</a></li>
+            <li><a href="dashboard.html">Account</a></li>
+        </ul>
+
+        <div class="nav-right-section">
+            <a href="wishlist.html" class="nav-icon-btn">♡</a>
+            <a href="cart.html" class="nav-icon-btn">
+                Bag
+                <span class="badge" id="cartBadge">2</span>
+            </a>
+            
+            <div class="user-menu-dropdown">
+                <div class="user-avatar-small">EM</div>
+                <div class="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item">My Profile</a>
+                    <a href="dashboard.html" class="dropdown-item">Dashboard</a>
+                    <a href="orders.html" class="dropdown-item">My Orders</a>
+                    <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                    <a href="settings.html" class="dropdown-item">Settings</a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
+            <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-user-section">
+            <div class="mobile-user-avatar">EM</div>
+            <div class="mobile-user-info">
+                <h3>Elena Montgomery</h3>
+                <p>VIP Member</p>
+            </div>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Menu</p>
+            <ul class="mobile-nav-links">
+                <li><a href="index.html"><span>🏠</span> Home</a></li>
+                <li><a href="collections.html"><span>✦</span> Collections</a></li>
+                <li><a href="shop.html" class="active"><span>🛍</span> Boutique</a></li>
+                <li><a href="cart.html"><span>🛒</span> Shopping Bag</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Account</p>
+            <ul class="mobile-nav-links">
+                <li><a href="dashboard.html"><span>◈</span> Dashboard</a></li>
+                <li><a href="orders.html"><span>◉</span> My Orders</a></li>
+                <li><a href="wishlist.html"><span>♡</span> Wishlist</a></li>
+                <li><a href="profile.html"><span>◊</span> Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Support</p>
+            <ul class="mobile-nav-links">
+                <li><a href="help.html"><span>?</span> Help Center</a></li>
+                <li><a href="index.html" onclick="logout()"><span>→</span> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Shop Container -->
+    <div class="shop-container">
+        <!-- Filters Sidebar -->
+        <aside class="filters-sidebar" id="filtersSidebar">
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    Categories
+                    <span class="filter-clear">Clear</span>
+                </h3>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat-rings" checked>
+                    <label for="cat-rings">Rings (24)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat-necklaces">
+                    <label for="cat-necklaces">Necklaces (18)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat-earrings">
+                    <label for="cat-earrings">Earrings (32)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat-bracelets">
+                    <label for="cat-bracelets">Bracelets (15)</label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    Collections
+                    <span class="filter-clear">Clear</span>
+                </h3>
+                <div class="filter-option">
+                    <input type="checkbox" id="col-celestial">
+                    <label for="col-celestial">Celestial Dreams</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="col-golden">
+                    <label for="col-golden">Golden Hour</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="col-royal">
+                    <label for="col-royal">Royal Heritage</label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">Price Range</h3>
+                <div class="price-range">
+                    <input type="number" class="price-input" placeholder="Min" value="1000">
+                    <span>-</span>
+                    <input type="number" class="price-input" placeholder="Max" value="50000">
+                </div>
+            </div>
+
+            <div class="filter-section" style="border-bottom: none;">
+                <h3 class="filter-title">Material</h3>
+                <div class="filter-option">
+                    <input type="checkbox" id="mat-platinum">
+                    <label for="mat-platinum">Platinum</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="mat-gold" checked>
+                    <label for="mat-gold">Gold</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="mat-rose">
+                    <label for="mat-rose">Rose Gold</label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Shop Area -->
+        <main class="shop-main">
+            <button class="mobile-filter-toggle" onclick="toggleFilters()">
+                ☰ Filters & Categories
+            </button>
+
+            <div class="shop-header">
+                <h1 class="shop-title">All Jewelry</h1>
+                <div class="shop-controls">
+                    <span style="color: var(--gray);">89 products</span>
+                    <select class="sort-select">
+                        <option>Sort by: Featured</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Newest</option>
+                    </select>
+                    <div class="view-toggle">
+                        <button class="view-btn active">⊞</button>
+                        <button class="view-btn">☰</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Products injected by JS -->
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn">←</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">→</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sample products
+        const products = [
+            { id: 1, name: "Eternal Solitaire Ring", category: "Rings", price: 12500, originalPrice: null, badge: "Bestseller", icon: "✦" },
+            { id: 2, name: "Midnight Sapphire Pendant", category: "Necklaces", price: 8900, originalPrice: null, badge: "New", icon: "✧" },
+            { id: 3, name: "Rose Gold Cascade Earrings", category: "Earrings", price: 6400, originalPrice: 7800, badge: "Sale", icon: "♦" },
+            { id: 4, name: "Imperial Emerald Cuff", category: "Bracelets", price: 24000, originalPrice: null, badge: "Limited", icon: "◈" },
+            { id: 5, name: "Celestial Star Band", category: "Rings", price: 3200, originalPrice: null, badge: null, icon: "✦" },
+            { id: 6, name: "Golden Hour Choker", category: "Necklaces", price: 15800, originalPrice: null, badge: "Exclusive", icon: "✧" },
+            { id: 7, name: "Royal Pearl Drops", category: "Earrings", price: 4500, originalPrice: null, badge: null, icon: "♦" },
+            { id: 8, name: "Art Deco Bangle", category: "Bracelets", price: 11200, originalPrice: 13500, badge: "Sale", icon: "◈" }
+        ];
+
+        let cartCount = 2;
+
+        // Render products
+        const grid = document.getElementById('productsGrid');
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-image">
+                    ${product.badge ? `<div class="product-badges"><span class="badge-tag ${product.badge === 'Sale' ? 'sale' : ''}">${product.badge}</span></div>` : ''}
+                    ${product.icon}
+                    <div class="product-actions">
+                        <button class="action-btn" onclick="quickView(${product.id})">👁</button>
+                        <button class="action-btn" onclick="addToWishlist(${product.id})">♡</button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">${product.category}</p>
+                    <h3 class="product-name">${product.name}</h3>
+                    <div class="product-price">
+                        <span class="current-price">$${product.price.toLocaleString()}</span>
+                        ${product.originalPrice ? `<span class="original-price">$${product.originalPrice.toLocaleString()}</span>` : ''}
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        function toggleMobileMenu() {
+            const toggle = document.querySelector('.mobile-toggle');
+            const menu = document.getElementById('mobileMenu');
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function toggleFilters() {
+            const sidebar = document.getElementById('filtersSidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function addToCart(productId) {
+            cartCount++;
+            document.getElementById('cartBadge').textContent = cartCount;
+            
+            const btn = event.target;
+            btn.textContent = 'Added!';
+            btn.style.background = 'var(--gold)';
+            btn.style.color = 'var(--black)';
+            
+            setTimeout(() => {
+                btn.textContent = 'Add to Cart';
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 1500);
+        }
+
+        function quickView(productId) {
+            alert('Quick view for product ' + productId);
+        }
+
+        function addToWishlist(productId) {
+            alert('Added to wishlist!');
+        }
+
+        function logout() {
+            localStorage.clear();
+        }
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (!menu.contains(e.target) && !toggle.contains(e.target) && menu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>

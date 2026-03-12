@@ -1,0 +1,648 @@
+<!-- settings.html - Settings Page with Consistent Navigation -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | LUMIÈRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E8C1;
+            --gold-dark: #B8941F;
+            --black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --cream: #FAF9F6;
+            --gray: #888;
+            --danger: #f44336;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--cream);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10,10,10,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.2em;
+        }
+
+        .nav-center-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-center-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-center-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-center-links a:hover,
+        .nav-center-links a.active {
+            color: var(--gold);
+        }
+
+        .nav-center-links a:hover::after,
+        .nav-center-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-right-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-icon-btn {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-icon-btn:hover {
+            color: var(--gold);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gold);
+            color: var(--black);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-menu-dropdown {
+            position: relative;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar-small:hover {
+            border-color: var(--gold);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            padding-left: 2rem;
+        }
+
+        .dropdown-item:last-child { 
+            border-bottom: none;
+            color: var(--danger);
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,10,0.98);
+            z-index: 999;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--charcoal);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .mobile-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .mobile-user-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+        }
+
+        .mobile-user-info p {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
+
+        /* Main Content */
+        .main-container {
+            margin-top: 70px;
+            padding: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        .settings-section {
+            background: var(--charcoal);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .section-title {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(212,175,55,0.1);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+
+        .setting-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--graphite);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .toggle.active {
+            background: var(--gold);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--cream);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active::after {
+            left: 26px;
+        }
+
+        select {
+            padding: 0.8rem 1.5rem;
+            background: var(--graphite);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: var(--cream);
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .danger-zone {
+            background: rgba(244,67,54,0.05);
+            border: 1px solid rgba(244,67,54,0.2);
+        }
+
+        .danger-zone .section-title {
+            color: var(--danger);
+            border-bottom-color: rgba(244,67,54,0.2);
+        }
+
+        .btn-danger {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-center-links { display: none; }
+            .mobile-toggle { display: flex; }
+            .mobile-menu-overlay { display: block; }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav { padding: 0 1rem; }
+            .main-container { padding: 1rem; }
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">LUMIÈRE</a>
+        
+        <ul class="nav-center-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="collections.html">Collections</a></li>
+            <li><a href="shop.html">Boutique</a></li>
+            <li><a href="dashboard.html">Account</a></li>
+        </ul>
+
+        <div class="nav-right-section">
+            <a href="wishlist.html" class="nav-icon-btn">♡</a>
+            <a href="cart.html" class="nav-icon-btn">
+                Bag
+                <span class="badge">2</span>
+            </a>
+            
+            <div class="user-menu-dropdown">
+                <div class="user-avatar-small">EM</div>
+                <div class="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item">My Profile</a>
+                    <a href="dashboard.html" class="dropdown-item">Dashboard</a>
+                    <a href="orders.html" class="dropdown-item">My Orders</a>
+                    <a href="wishlist.html" class="dropdown-item">Wishlist</a>
+                    <a href="settings.html" class="dropdown-item">Settings</a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">Logout</a>
+                </div>
+            </div>
+
+            <div class="mobile-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-user-section">
+            <div class="mobile-user-avatar">EM</div>
+            <div class="mobile-user-info">
+                <h3>Elena Montgomery</h3>
+                <p>VIP Member</p>
+            </div>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Account</p>
+            <ul class="mobile-nav-links">
+                <li><a href="dashboard.html"><span>◈</span> Dashboard</a></li>
+                <li><a href="orders.html"><span>◉</span> My Orders</a></li>
+                <li><a href="wishlist.html"><span>♡</span> Wishlist</a></li>
+                <li><a href="profile.html"><span>◊</span> Profile</a></li>
+                <li><a href="settings.html" class="active"><span>⚙</span> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Shopping</p>
+            <ul class="mobile-nav-links">
+                <li><a href="index.html"><span>🏠</span> Home</a></li>
+                <li><a href="collections.html"><span>✦</span> Collections</a></li>
+                <li><a href="shop.html"><span>🛍</span> Boutique</a></li>
+                <li><a href="cart.html"><span>🛒</span> Shopping Bag</a></li>
+            </ul>
+        </div>
+
+        <div class="mobile-nav-section">
+            <p class="mobile-nav-title">Support</p>
+            <ul class="mobile-nav-links">
+                <li><a href="help.html"><span>?</span> Help Center</a></li>
+                <li><a href="index.html" onclick="logout()"><span>→</span> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1>Settings</h1>
+        </div>
+
+        <div class="settings-section">
+            <h2 class="section-title">Notifications</h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive updates about your orders</p>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>SMS Notifications</h4>
+                    <p>Get text alerts for shipping updates</p>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Marketing Emails</h4>
+                    <p>New collections and exclusive offers</p>
+                </div>
+                <div class="toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2 class="section-title">Preferences</h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Language</h4>
+                    <p>Select your preferred language</p>
+                </div>
+                <select>
+                    <option>English</option>
+                    <option>French</option>
+                    <option>Italian</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Currency</h4>
+                    <p>Display prices in your currency</p>
+                </div>
+                <select>
+                    <option>USD ($)</option>
+                    <option>EUR (€)</option>
+                    <option>GBP (£)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2 class="section-title">Privacy</h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Profile Visibility</h4>
+                    <p>Make your profile visible to others</p>
+                </div>
+                <div class="toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Activity Status</h4>
+                    <p>Show when you're active</p>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+        </div>
+
+        <div class="settings-section danger-zone">
+            <h2 class="section-title">Danger Zone</h2>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Delete Account</h4>
+                    <p>Permanently delete your account and data</p>
+                </div>
+                <button class="btn-danger">Delete Account</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleMobileMenu() {
+            const toggle = document.querySelector('.mobile-toggle');
+            const menu = document.getElementById('mobileMenu');
+            
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (!menu.contains(e.target) && !toggle.contains(e.target) && menu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>
